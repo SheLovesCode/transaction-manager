@@ -1,5 +1,5 @@
 # Use a slim Python image
-FROM python:3.9-slim
+FROM python:3.9
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -8,7 +8,8 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install dependencies from requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt --verbose
+
 
 # Copy the entire backend directory into the container's /app directory
 COPY . .

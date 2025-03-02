@@ -3,8 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from .config import Config
 
+load_dotenv()
+
 db = SQLAlchemy()
 ma = Marshmallow()
+
 
 
 def create_app():
