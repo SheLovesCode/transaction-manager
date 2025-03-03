@@ -5,31 +5,25 @@ from flask_marshmallow import Marshmallow
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# Initialize extensions
 db = SQLAlchemy()
 ma = Marshmallow()
 
 def create_app():
-    """Factory function to create Flask app."""
     app = Flask(__name__)
 
-    # Load config from environment variables
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL", "postgresql://user:password@db:5432/transactions_db"
+        "DATABASE_URL", "postgresql://myuser:mypassword@db:5432/transactions_db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    # Initialize extensions with the app
     db.init_app(app)
     ma.init_app(app)
 
-    # Define the Transaction model
     class Transaction(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         amount = db.Column(db.Numeric, nullable=False)
         date = db.Column(db.DateTime, nullable=False)
-        type = db.Column(db.String(10), nullable=False)  # "credit" or "debit"
+        type = db.Column(db.String(10), nullable=False)
         description = db.Column(db.String(255), nullable=True)
 
     # Marshmallow schema for serialization
