@@ -1,9 +1,9 @@
-import {  useEffect } from 'react';
+import { useEffect } from 'react';
 import { Modal, Box, Button, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { useForm} from 'react-hook-form';
-import {  ToastContainer } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {ExistingTransaction, NewTransaction} from "../types/Transaction.ts";
+import { ExistingTransaction, NewTransaction } from "../types/Transaction.ts";
 
 interface TransactionModalProps {
   open: boolean;
@@ -17,7 +17,7 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
     defaultValues: {
       amount: transaction?.amount,
       date: transaction?.date,
-      type: transaction?.type,
+      type: transaction?.type || 'credit', // Provide a default value
       description: transaction?.description,
     },
     mode: 'onChange',
@@ -30,7 +30,12 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
       setValue('type', transaction.type);
       setValue('description', transaction.description);
     } else {
-      reset();
+      reset({
+        amount: undefined,
+        date: undefined,
+        type: 'credit', // Ensure a default value here as well
+        description: undefined,
+      });
     }
   }, [transaction, reset, setValue]);
 
@@ -82,12 +87,13 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
                   shrink: true
                 }
               }}
-/>
+            />
             <FormControl fullWidth margin="normal" error={!!errors.type}>
               <InputLabel>Type</InputLabel>
               <Select
                 label="Type"
                 {...register('type', { required: true })}
+                defaultValue={transaction?.type || 'credit'} // Provide a default value here
               >
                 <MenuItem value="credit">Credit</MenuItem>
                 <MenuItem value="debit">Debit</MenuItem>

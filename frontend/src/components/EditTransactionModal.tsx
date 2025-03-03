@@ -9,14 +9,14 @@ interface EditTransactionModalProps {
   open: boolean;
   onClose: () => void;
   transaction: ExistingTransaction;
-  onUpdate: () => void;
+  onUpdate: (updatedTransaction: ExistingTransaction) => void;
 }
 
 const EditTransactionModal = ({ open, onClose, transaction, onUpdate }: EditTransactionModalProps) => {
   const handleSave = async (updatedTransaction: NewTransaction) => {
     try {
-      await axios.put(`/api/transactions/${transaction.id}`, updatedTransaction);
-      onUpdate();
+      const response = await axios.put(`/api/transactions/${transaction.id}`, updatedTransaction);
+      onUpdate(response.data);
       onClose();
     } catch (error) {
       console.error('Error updating transaction:', error);
