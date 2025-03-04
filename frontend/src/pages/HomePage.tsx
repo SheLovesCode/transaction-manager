@@ -3,7 +3,10 @@ import AddTransactionModal from '../components/AddTransactionModal.tsx';
 import TransactionTable from '../components/TransactionTable.tsx';
 import { useState, useEffect } from 'react';
 import { ExistingTransaction } from '../types/Transaction.ts';
-// import axios from 'axios'; // Commented out axios
+import Paper from '@mui/material/Paper';
+// import axios from 'axios';
+import { AddCircleOutline } from '@mui/icons-material';
+import '../App.css';
 
 function HomePage() {
   const [open, setOpenAddTransaction] = useState(false);
@@ -15,7 +18,7 @@ function HomePage() {
       amount: 75.5,
       date: '2023-10-26',
       type: 'debit',
-      description: 'Weekly grocery run',
+      description: 'Weekly grocery run that has been because of groceries',
     },
     {
       id: 2,
@@ -139,14 +142,56 @@ function HomePage() {
     handleCloseAddTransaction();
   };
 
+  function calculateBalance(transactions: ExistingTransaction[]): number {
+    return transactions.reduce((balance, transaction) => {
+      if (transaction.type === 'credit') {
+        return balance + transaction.amount;
+      } else {
+        return balance - transaction.amount;
+      }
+    }, 0);
+  }
+
+  const [balance, setBalance] = useState(0);
+
+  useEffect(() => {
+    setBalance(calculateBalance(transactions)); // Calculate balance when transactions change
+  }, [transactions]);
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Financial Records
+      <Typography variant="h4" gutterBottom justifySelf={'center'}>
+        Banking Transaction Manager
       </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <Button onClick={handleOpenAddTransaction}>Add Transaction</Button>
-      </Box>
+      <Paper
+        elevation={3}
+        sx={{
+          padding: '24px',
+          width: '100%',
+          margin: '0 auto',
+          backgroundColor: 'beige',
+          marginBottom: '20px',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6">Balance: R{balance.toFixed(2)}</Typography>
+          <Button
+  variant="contained"
+  className="add-transaction-button"
+  onClick={handleOpenAddTransaction}
+>
+            <AddCircleOutline />
+            Add Transaction
+          </Button>
+        </Box>
+      </Paper>
       <AddTransactionModal
         open={open}
         onClose={handleCloseAddTransaction}

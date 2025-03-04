@@ -40,3 +40,15 @@
 .read-the-docs {
   color: #888;
 }
+
+.add-transaction-button {
+  background-color: #dcbe57 !important;
+  border-radius: 20px !important;
+  padding: 10px 20px !important;
+  font-weight: bold;
+  color: black !important;
+}
+
+.add-transaction-button:hover {
+  background-color: gray;
+}

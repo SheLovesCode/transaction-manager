@@ -21,40 +21,8 @@ export default function TransactionTable({
   const [selectedTransaction, setSelectedTransaction] =
     useState<ExistingTransaction | null>(null);
 
-  const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'description', headerName: 'Description', width: 130 },
-    { field: 'type', headerName: 'Type', width: 90 },
-    { field: 'amount', headerName: 'Amount', type: 'number', width: 90 },
-    {
-      field: 'date',
-      headerName: 'Date',
-      type: 'string',
-      width: 160,
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      width: 150,
-      renderCell: (params) => (
-        <div>
-          <IconButton onClick={() => handleView(params.row)}>
-            <VisibilityIcon />
-          </IconButton>
-          <IconButton onClick={() => handleEdit(params.row)}>
-            <EditIcon />
-          </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      ),
-    },
-  ];
-
   const handleView = (transaction: ExistingTransaction) => {
     console.log('Viewing', transaction.id);
-    // Navigate or open modal as needed
   };
 
   const handleEdit = (transaction: ExistingTransaction) => {
@@ -69,8 +37,6 @@ export default function TransactionTable({
     } catch (error) {
       console.error('Error deleting transaction:', error);
     }
-
-    console.log(`Delete transaction with ID: ${id}`);
   };
 
   const handleCloseEditTransaction = () => {
@@ -87,18 +53,82 @@ export default function TransactionTable({
     handleCloseEditTransaction();
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: 'date',
+      headerName: 'Date',
+      type: 'string',
+      flex: 1,
+      headerAlign: 'center',
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 2,
+      headerAlign: 'center',
+    },
+    { field: 'type', headerName: 'Type', flex: 1, headerAlign: 'center' },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      type: 'number',
+      flex: 1,
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', paddingTop: '12px' }}>
+          <Typography sx={{ marginRight: '4px' }}>R</Typography>
+          <Typography sx={{ textAlign: 'right', width: '100%' }}>
+            {Math.abs(params.value).toFixed(2)}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      flex: 1,
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Box>
+          <IconButton onClick={() => handleView(params.row)}>
+            <VisibilityIcon />
+          </IconButton>
+          <IconButton onClick={() => handleEdit(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDelete(params.row.id)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
+
   return (
-    <Paper sx={{ height: 400, width: '100%', padding: '20px' }}>
-      <Box sx={{ marginBottom: '16px' }}>
-        <Typography variant="h6">Transactions</Typography>
-      </Box>
-      <DataGrid
-        rows={transactions}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        sx={{ border: 0 }}
-      />
+    <Box sx={{ minHeight: '100vh', width: '100%' }}>
+      <Paper
+        elevation={3}
+        sx={{
+          padding: '24px',
+          width: '100%',
+          margin: '0 auto',
+          backgroundColor: 'white',
+        }}
+      >
+        <DataGrid
+          rows={transactions}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10]}
+          sx={{
+            border: 0,
+            backgroundColor: '#fff',
+            marginTop: '16px',
+            width: '100%',
+          }}
+        />
+      </Paper>
+
       {selectedTransaction && (
         <EditTransactionModal
           open={openEditTransaction}
@@ -107,6 +137,6 @@ export default function TransactionTable({
           onUpdate={handleUpdateTransaction}
         />
       )}
-    </Paper>
+    </Box>
   );
 }
