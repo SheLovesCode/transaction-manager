@@ -3,9 +3,9 @@ import { ExistingTransaction, NewTransaction } from '../types/Transaction.ts';
 import API_URL from '../config/Config.tsx';
 
 const httpService = {
-  getTransactions: async (): Promise<ExistingTransaction> => {
+  getTransactions: async (): Promise<ExistingTransaction[]> => {
     try {
-      const response = await axios.get<ExistingTransaction>(`${API_URL}/api/transactions`);
+      const response = await axios.get<ExistingTransaction[]>(`${API_URL}/api/transactions`);
       return response.data;
     } catch (err) {
       console.error('Error fetching transactions:', err);
