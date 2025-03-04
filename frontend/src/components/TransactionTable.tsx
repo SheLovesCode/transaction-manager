@@ -92,7 +92,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
                 pageSizeOptions={[5, 10]}
                 sx={{ border: 0 }}
             />
-            {selectedTransaction && ( // Conditionally render the modal
+            {selectedTransaction && (
                 <EditTransactionModal
                     open={openEditTransaction}
                     onClose={handleCloseEditTransaction}
