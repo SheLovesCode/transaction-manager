@@ -5,8 +5,7 @@ import { Box } from '@mui/material';
 
 function App() {
   return (
-    <Box
-    >
+    <Box>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/transactions/:id" element={<ViewSingleTransaction />} />
