@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ExistingTransaction } from '../types/Transaction.ts';
 import { useState } from 'react';
 import EditTransactionModal from './EditTransactionModal.tsx';
+import { useNavigate } from 'react-router-dom';
 
 interface TransactionTableProps {
   transactions: ExistingTransaction[];
@@ -15,6 +16,7 @@ interface TransactionTableProps {
 export default function TransactionTable({
   transactions,
 }: TransactionTableProps) {
+  const navigate = useNavigate();
   const paginationModel = { page: 0, pageSize: 5 };
   const [_, setRows] = useState<ExistingTransaction[]>(transactions);
   const [openEditTransaction, setOpenEditTransaction] = useState(false);
@@ -22,7 +24,7 @@ export default function TransactionTable({
     useState<ExistingTransaction | null>(null);
 
   const handleView = (transaction: ExistingTransaction) => {
-    console.log('Viewing', transaction.id);
+    navigate(`/transactions/${transaction.id}`);
   };
 
   const handleEdit = (transaction: ExistingTransaction) => {
