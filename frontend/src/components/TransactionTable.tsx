@@ -1,17 +1,19 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { IconButton, Box, Typography } from '@mui/material';
+import { IconButton, Box, Typography, CircularProgress } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ExistingTransaction } from '../types/Transaction.ts';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import EditTransactionModal from './EditTransactionModal.tsx';
 import { useNavigate } from 'react-router-dom';
 import httpService from '../services/HttpService.tsx';
+import { toast, ToastContainer } from 'react-toastify';
 
 interface TransactionTableProps {
   transactions: ExistingTransaction[];
+  setTransactions: React.Dispatch<React.SetStateAction<ExistingTransaction[]>>;
 }
 
 export default function TransactionTable({
@@ -19,7 +21,8 @@ export default function TransactionTable({
 }: TransactionTableProps) {
   const navigate = useNavigate();
   const paginationModel = { page: 0, pageSize: 5 };
-  const [_, setRows] = useState<ExistingTransaction[]>(transactions);
+  const [loading, setLoading] = useState(false);
+  const [_, setTransactions] = useState<ExistingTransaction[]>(transactions);
   const [openEditTransaction, setOpenEditTransaction] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<ExistingTransaction | null>(null);
@@ -35,10 +38,16 @@ export default function TransactionTable({
 
   const handleDelete = async (id: number) => {
     try {
+      setLoading(true);
       await httpService.deleteTransaction(id);
-      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
+      const response: ExistingTransaction[] =
+        await httpService.getTransactions();
+      setTransactions(response);
     } catch (error) {
       console.error('Error deleting transaction:', error);
+      toast.error('Error deleting transaction. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,10 +57,14 @@ export default function TransactionTable({
   };
 
   const handleUpdateTransaction = (updatedTransaction: ExistingTransaction) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === updatedTransaction.id ? updatedTransaction : row,
-      ),
+    setTransactions(
+      (prevTransactions: ExistingTransaction[]): ExistingTransaction[] =>
+        prevTransactions.map(
+          (transaction: ExistingTransaction): ExistingTransaction =>
+            transaction.id === updatedTransaction.id
+              ? updatedTransaction
+              : transaction,
+        ),
     );
     handleCloseEditTransaction();
   };
@@ -118,19 +131,28 @@ export default function TransactionTable({
           backgroundColor: 'white',
         }}
       >
-        <DataGrid
-          rows={transactions}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          sx={{
-            border: 0,
-            backgroundColor: '#fff',
-            marginTop: '16px',
-            width: '100%',
-          }}
-        />
+        {loading ? (
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', padding: '20px' }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DataGrid
+            rows={transactions}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10]}
+            sx={{
+              border: 0,
+              backgroundColor: '#fff',
+              marginTop: '16px',
+              width: '100%',
+            }}
+          />
+        )}
       </Paper>
+      <ToastContainer />
 
       {selectedTransaction && (
         <EditTransactionModal

@@ -54,7 +54,7 @@ const TransactionModal = ({
       reset({
         amount: undefined,
         date: undefined,
-        type: 'credit', // Ensure a default value here as well
+        type: 'credit',
         description: undefined,
       });
     }

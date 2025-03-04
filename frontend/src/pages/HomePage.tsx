@@ -105,7 +105,10 @@ function HomePage() {
             onClose={handleCloseAddTransaction}
             onAdd={handleAddTransaction}
           />
-          <TransactionTable transactions={transactions} />
+          <TransactionTable
+            transactions={transactions}
+            setTransactions={setTransactions}
+          />
         </>
       )}
     </Container>
