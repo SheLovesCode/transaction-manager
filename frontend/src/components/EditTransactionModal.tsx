@@ -1,9 +1,10 @@
-import { Modal, Box } from '@mui/material';
+import { Modal, Box, CircularProgress } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ExistingTransaction, NewTransaction } from '../types/Transaction';
 import TransactionModal from './TransactionModal';
-import axios from 'axios';
+import { useState } from 'react';
+import httpService from '../services/HttpService.tsx';
 
 interface EditTransactionModalProps {
   open: boolean;
@@ -18,19 +19,38 @@ const EditTransactionModal = ({
   transaction,
   onUpdate,
 }: EditTransactionModalProps) => {
+  const [loading, setLoading] = useState(false);
   const handleSave = async (updatedTransaction: NewTransaction) => {
+    setLoading(true);
     try {
-      const response = await axios.put(
-        `/api/transactions/${transaction.id}`,
+      const response: ExistingTransaction = await httpService.updateTransaction(
+        transaction.id,
         updatedTransaction,
       );
-      onUpdate(response.data);
+      onUpdate(response);
       onClose();
     } catch (error) {
       console.error('Error updating transaction:', error);
       toast.error('Error updating transaction. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <Modal open={open} onClose={onClose}>

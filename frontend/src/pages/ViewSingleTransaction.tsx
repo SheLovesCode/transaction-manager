@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-// import axios from 'axios';
 import {
   CircularProgress,
   Typography,
@@ -17,6 +16,7 @@ import {
 } from '@mui/material';
 import { ExistingTransaction } from '../types/Transaction.ts';
 import EditTransactionModal from '../components/EditTransactionModal.tsx';
+import httpService from '../services/HttpService.tsx';
 
 function ViewSingleTransaction() {
   const { id } = useParams<{ id: string }>();
@@ -31,17 +31,20 @@ function ViewSingleTransaction() {
   const fetchTransaction = async () => {
     setLoading(true);
     setError(null);
-    // try {
-    //   const response = await axios.get<ExistingTransaction>(
-    //     `/api/transactions/${id}`,
-    //   );
-    //   setTransaction(response.data);
-    // } catch (err: any) {
-    //   setError(err.message || 'Failed to fetch transaction.');
-    //   console.error('Error fetching transaction:', err);
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      const transactionID: number = Number(id);
+      const response: ExistingTransaction =
+        await httpService.getTransaction(transactionID);
+      setTransaction(response);
+    } catch (err: any) {
+      if (err.response && err.response.status === 404) {
+        setError('Transaction not found.');
+      } else {
+        setError('Error fetching transaction.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -58,7 +61,7 @@ function ViewSingleTransaction() {
 
   useEffect(() => {
     if (!transaction) {
-     setTransaction(mockTransaction);
+      setTransaction(mockTransaction);
       setLoading(false);
     }
   }, [transaction]);
@@ -82,8 +85,8 @@ function ViewSingleTransaction() {
 
   if (loading) {
     return (
-      <div
-        style={{
+      <Box
+        sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -91,48 +94,57 @@ function ViewSingleTransaction() {
         }}
       >
         <CircularProgress />
-      </div>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <div
-        style={{
+      <Box
+        sx={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           height: '100vh',
+          flexDirection: 'column',
         }}
       >
         <Typography color="error">{error}</Typography>
-      </div>
+        <Button
+          sx={{ width: '40%', marginTop: '20px' }}
+          variant="outlined"
+          className="secondary-button"
+          onClick={handleGoHome}
+        >
+          Go Back to Home Page
+        </Button>
+      </Box>
     );
   }
 
-if (!transaction) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        flexDirection: 'column'
-      }}
-    >
-      <Typography>Transaction not found</Typography>
-      <Button
-        sx={{ width: '40%', marginTop: '20px' }}
-        variant="outlined"
-        className='secondary-button'
-        onClick={handleGoHome}
+  if (!transaction) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          flexDirection: 'column',
+        }}
       >
-        Go Back to Home Page
-      </Button>
-    </Box>
-  );
-}
+        <Typography>Transaction not found</Typography>
+        <Button
+          sx={{ width: '40%', marginTop: '20px' }}
+          variant="outlined"
+          className="secondary-button"
+          onClick={handleGoHome}
+        >
+          Go Back to Home Page
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <div style={{ padding: '20px' }}>
@@ -144,14 +156,20 @@ if (!transaction) {
           mb: 2,
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{
-          margin: 'auto'
-        }}>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            margin: 'auto',
+          }}
+        >
           Transaction Details
         </Typography>
       </Box>
-      <Card style={{ width: '50%', margin: '0 auto' }}
-      sx={{ borderTop: '1px solid #ccc' }}>
+      <Card
+        style={{ width: '50%', margin: '0 auto' }}
+        sx={{ borderTop: '1px solid #ccc' }}
+      >
         <CardContent>
           <TableContainer component={Paper}>
             <Table>
@@ -184,13 +202,13 @@ if (!transaction) {
             Edit Transaction
           </Button>
           <Button
-        sx={{ width: '90%', marginTop: '20px' }}
-        variant="outlined"
-        className='secondary-button'
-        onClick={handleGoHome}
-      >
-        Go Back to Home Page
-      </Button>
+            sx={{ width: '90%', marginTop: '20px' }}
+            variant="outlined"
+            className="secondary-button"
+            onClick={handleGoHome}
+          >
+            Go Back to Home Page
+          </Button>
         </CardContent>
       </Card>
       <EditTransactionModal

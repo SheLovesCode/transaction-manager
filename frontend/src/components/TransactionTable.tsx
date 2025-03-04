@@ -8,6 +8,7 @@ import { ExistingTransaction } from '../types/Transaction.ts';
 import { useState } from 'react';
 import EditTransactionModal from './EditTransactionModal.tsx';
 import { useNavigate } from 'react-router-dom';
+import httpService from '../services/HttpService.tsx';
 
 interface TransactionTableProps {
   transactions: ExistingTransaction[];
@@ -34,7 +35,7 @@ export default function TransactionTable({
 
   const handleDelete = async (id: number) => {
     try {
-      console.log(`API call to delete transaction with ID: ${id}`);
+      await httpService.deleteTransaction(id);
       setRows((prevRows) => prevRows.filter((row) => row.id !== id));
     } catch (error) {
       console.error('Error deleting transaction:', error);
