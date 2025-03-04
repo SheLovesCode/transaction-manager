@@ -1,15 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import HomePage from "./pages/HomePage.tsx";
-import SingleTransaction from "./pages/SingleTransaction.tsx";
+import { Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage.tsx';
+import ViewSingleTransaction from './pages/ViewSingleTransaction.tsx';
+import { Box } from '@mui/material';
 
-export function App() {
+function App() {
   return (
-    <BrowserRouter>
+    <Box>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        {/*<Route path="/transactions/:id" element={<SingleTransaction />} />*/}
+        <Route path="/transactions/:id" element={<ViewSingleTransaction />} />
       </Routes>
-    </BrowserRouter>
+    </Box>
   );
 }
 

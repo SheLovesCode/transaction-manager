@@ -1,9 +1,19 @@
 import { useEffect } from 'react';
-import { Modal, Box, Button, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import {
+  Modal,
+  Box,
+  Button,
+  TextField,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Typography,
+} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ExistingTransaction, NewTransaction } from "../types/Transaction.ts";
+import { ExistingTransaction, NewTransaction } from '../types/Transaction.ts';
 
 interface TransactionModalProps {
   open: boolean;
@@ -12,8 +22,19 @@ interface TransactionModalProps {
   onSave: (transactionData: NewTransaction) => void;
 }
 
-const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionModalProps) => {
-  const { register, handleSubmit, reset, setValue, formState: { errors, isValid } } = useForm<NewTransaction>({
+const TransactionModal = ({
+  open,
+  onClose,
+  transaction,
+  onSave,
+}: TransactionModalProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors, isValid },
+  } = useForm<NewTransaction>({
     defaultValues: {
       amount: transaction?.amount,
       date: transaction?.date,
@@ -44,7 +65,7 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} sx={{ backgroundColor: 'beige' }}>
       <Box
         sx={{
           position: 'absolute',
@@ -59,14 +80,22 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">{transaction ? 'Edit' : 'Add'} Transaction</h3>
+          <Typography sx={{ textAlign: 'center' }}>
+            {transaction ? 'Edit' : 'Add'} Transaction
+          </Typography>
           <div className="mt-2">
             <TextField
-              label="Amount"
+              label="Amount (R)"
               variant="outlined"
               fullWidth
               margin="normal"
               type="number"
+              min="0.01"
+              slotProps={{
+                htmlInput: {
+                  step: 0.01,
+                },
+              }}
               error={!!errors.amount}
               helperText={errors.amount?.message}
               {...register('amount', { required: true })}
@@ -84,8 +113,8 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
                   ...register('date', { required: true }),
                 },
                 inputLabel: {
-                  shrink: true
-                }
+                  shrink: true,
+                },
               }}
             />
             <FormControl fullWidth margin="normal" error={!!errors.type}>
@@ -114,7 +143,7 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
           <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
             <Button
               variant="contained"
-              color="primary"
+              className="primary-button"
               type="submit"
               fullWidth
               sx={{ marginTop: 2 }}
@@ -124,7 +153,7 @@ const TransactionModal = ({ open, onClose, transaction, onSave }: TransactionMod
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
+              className="secondary-button"
               onClick={onClose}
               fullWidth
               sx={{ marginTop: 2 }}

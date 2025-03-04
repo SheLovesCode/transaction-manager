@@ -5,6 +5,17 @@
   text-align: center;
 }
 
+:root {
+  --primary-color: #dcbe57;
+  --secondary-color: #333333;
+  --accent-color: #f0f0f0;
+}
+
+.my-element {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -39,4 +50,24 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.primary-button {
+  background-color: var(--primary-color) !important;
+  border-radius: 20px !important;
+  padding: 10px 20px !important;
+  font-weight: bold;
+  color: black !important;
+}
+
+.primary-button:hover {
+  background-color: gray;
+}
+
+.secondary-button {
+  border-radius: 20px !important;
+  padding: 10px 20px !important;
+  font-weight: bold;
+  color: black !important;
+  border-color: black !important;
 }
