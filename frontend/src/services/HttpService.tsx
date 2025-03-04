@@ -1,21 +1,11 @@
 import axios from 'axios';
+import { ExistingTransaction, NewTransaction } from '../types/Transaction.ts';
 import API_URL from '../config/Config.tsx';
-import { NewTransaction } from '../types/Transaction.ts';
 
 const httpService = {
-  createTransaction: async (transactionData: NewTransaction) => {
+  getTransactions: async (): Promise<ExistingTransaction> => {
     try {
-      const response = await axios.post(`${API_URL}/api/transactions`, transactionData);
-      return response.data;
-    } catch (err) {
-      console.error('Error creating transaction:', err);
-      throw err;
-    }
-  },
-
-  getTransactions: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/api/transactions`);
+      const response = await axios.get<ExistingTransaction>(`${API_URL}/api/transactions`);
       return response.data;
     } catch (err) {
       console.error('Error fetching transactions:', err);
@@ -23,9 +13,9 @@ const httpService = {
     }
   },
 
-  getTransaction: async (id: number) => {
+  getTransaction: async (id: number): Promise<ExistingTransaction> => {
     try {
-      const response = await axios.get(`${API_URL}/api/transactions/${id}`);
+      const response = await axios.get<ExistingTransaction>(`${API_URL}/api/transactions/${id}`);
       return response.data;
     } catch (err) {
       console.error('Error fetching transaction:', err);
@@ -33,9 +23,19 @@ const httpService = {
     }
   },
 
-  updateTransaction: async (id: number, transactionData: NewTransaction) => {
+  createTransaction: async (transactionData: NewTransaction): Promise<ExistingTransaction> => {
     try {
-      const response = await axios.put(`${API_URL}/api/transactions/${id}`, transactionData);
+      const response = await axios.post<ExistingTransaction>(`${API_URL}/api/transactions`, transactionData);
+      return response.data;
+    } catch (err) {
+      console.error('Error creating transaction:', err);
+      throw err;
+    }
+  },
+
+  updateTransaction: async (id: number, transactionData: NewTransaction): Promise<ExistingTransaction> => {
+    try {
+      const response = await axios.put<ExistingTransaction>(`${API_URL}/api/transactions/${id}`, transactionData);
       return response.data;
     } catch (err) {
       console.error('Error updating transaction:', err);
@@ -43,10 +43,9 @@ const httpService = {
     }
   },
 
-  deleteTransaction: async (id: number) => {
+  deleteTransaction: async (id: number): Promise<void> => {
     try {
-      const response = await axios.delete(`${API_URL}/api/transactions/${id}`);
-      return response.data;
+      await axios.delete(`${API_URL}/api/transactions/${id}`);
     } catch (err) {
       console.error('Error deleting transaction:', err);
       throw err;

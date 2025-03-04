@@ -7,6 +7,7 @@ import Paper from '@mui/material/Paper';
 // import axios from 'axios';
 import { AddCircleOutline } from '@mui/icons-material';
 import '../App.css';
+import httpService from '../services/HttpService.tsx';
 
 function HomePage() {
   const [open, setOpenAddTransaction] = useState(false);
@@ -121,18 +122,18 @@ function HomePage() {
   ];
 
   useEffect(() => {
-    // const fetchTransactions = async () => {
-    //   try {
-    //     const response = await axios.get<ExistingTransaction[]>('/api/transactions');
-    //     setTransactions(response.data);
-    //   } catch (error) {
-    //     console.error('Error fetching transactions:', error);
-    //   }
-    // };
-    // fetchTransactions();
+  const fetchData = async () => {
+    try {
+      const response: ExistingTransaction[] = await httpService.getTransactions();
+      setTransactions(response);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
 
-    setTransactions(rows);
-  }, []);
+  fetchData();
+     setTransactions(rows);
+},);
 
   const handleOpenAddTransaction = () => setOpenAddTransaction(true);
   const handleCloseAddTransaction = () => setOpenAddTransaction(false);
