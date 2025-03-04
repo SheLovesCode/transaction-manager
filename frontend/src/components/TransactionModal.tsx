@@ -89,6 +89,12 @@ const TransactionModal = ({
               fullWidth
               margin="normal"
               type="number"
+              min="0.01"
+              slotProps={{
+                htmlInput: {
+                  step:0.01
+                }
+              }}
               error={!!errors.amount}
               helperText={errors.amount?.message}
               {...register('amount', { required: true })}

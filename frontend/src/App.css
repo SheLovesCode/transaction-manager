@@ -5,6 +5,17 @@
   text-align: center;
 }
 
+:root {
+  --primary-color: #dcbe57;
+  --secondary-color: #333333;
+  --accent-color: #f0f0f0;
+}
+
+.my-element {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -42,7 +53,7 @@
 }
 
 .add-transaction-button {
-  background-color: #dcbe57 !important;
+  background-color: var(--primary-color) !important;
   border-radius: 20px !important;
   padding: 10px 20px !important;
   font-weight: bold;
