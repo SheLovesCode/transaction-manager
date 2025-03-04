@@ -52,7 +52,7 @@
   color: #888;
 }
 
-.add-transaction-button {
+.primary-button {
   background-color: var(--primary-color) !important;
   border-radius: 20px !important;
   padding: 10px 20px !important;
@@ -60,6 +60,14 @@
   color: black !important;
 }
 
-.add-transaction-button:hover {
+.primary-button:hover {
   background-color: gray;
+}
+
+.secondary-button {
+  border-radius: 20px !important;
+  padding: 10px 20px !important;
+  font-weight: bold;
+  color: black !important;
+  border-color: black !important;
 }

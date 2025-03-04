@@ -8,6 +8,7 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Typography,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { ToastContainer } from 'react-toastify';
@@ -64,7 +65,7 @@ const TransactionModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} sx={{backgroundColor:'beige'}}>
       <Box
         sx={{
           position: 'absolute',
@@ -79,12 +80,12 @@ const TransactionModal = ({
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <Typography sx={{ textAlign: 'center' }}>
             {transaction ? 'Edit' : 'Add'} Transaction
-          </h3>
+          </Typography>
           <div className="mt-2">
             <TextField
-              label="Amount"
+              label="Amount (R)"
               variant="outlined"
               fullWidth
               margin="normal"
@@ -92,8 +93,8 @@ const TransactionModal = ({
               min="0.01"
               slotProps={{
                 htmlInput: {
-                  step:0.01
-                }
+                  step: 0.01,
+                },
               }}
               error={!!errors.amount}
               helperText={errors.amount?.message}
@@ -142,7 +143,7 @@ const TransactionModal = ({
           <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
             <Button
               variant="contained"
-              color="primary"
+              className="primary-button"
               type="submit"
               fullWidth
               sx={{ marginTop: 2 }}
@@ -152,7 +153,7 @@ const TransactionModal = ({
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
+              className="secondary-button"
               onClick={onClose}
               fullWidth
               sx={{ marginTop: 2 }}

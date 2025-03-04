@@ -183,10 +183,10 @@ function HomePage() {
         >
           <Typography variant="h6">Balance: R{balance.toFixed(2)}</Typography>
           <Button
-  variant="contained"
-  className="add-transaction-button"
-  onClick={handleOpenAddTransaction}
->
+            variant="contained"
+            className="primary-button"
+            onClick={handleOpenAddTransaction}
+          >
             <AddCircleOutline />
             Add Transaction
           </Button>

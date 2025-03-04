@@ -111,7 +111,11 @@ function ViewSingleTransaction() {
         <Typography variant="h4" gutterBottom>
           Transaction Details
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleEdit}>
+        <Button
+          variant="contained"
+          className="primary-button"
+          onClick={handleEdit}
+        >
           Edit Transaction
         </Button>
       </Box>
