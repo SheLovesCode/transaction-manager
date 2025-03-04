@@ -1,47 +1,31 @@
 services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: txn_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
     depends_on:
       - backend
-    networks:
-      - app-network
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "5050:5050"
-    volumes:
-      - ./backend:/app
-      - ./backend/.env:/app/.env
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: postgres:latest
-    env_file:
-      - ./backend/.env
-    volumes:
-      - pg_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
 
 volumes:
-  pg_data:
-
-networks:
-  app-network:
-    driver: bridge
+  postgres-db-volume:
