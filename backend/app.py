@@ -1,10 +1,8 @@
 from flask import Flask
-
 from routes.gets import blp as GetRequestRoutes
 from routes.post import blp as PostRequestRoutes
 from routes.put import blp as PutRequestRoutes
 from routes.delete import blp as DeleteRequestRoutes
-
 from db.db_service import db
 
 def create_app() -> Flask:

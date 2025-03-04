@@ -1,3 +1,3 @@
-const API_URL = 'http://backend:5050';
+const API_URL = 'http://localhost/transactions';
 
 export default API_URL;

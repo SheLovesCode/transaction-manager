@@ -5,9 +5,7 @@ import API_URL from '../config/Config.tsx';
 const httpService = {
   getTransactions: async (): Promise<ExistingTransaction[]> => {
     try {
-      const response = await axios.get<ExistingTransaction[]>(
-        `${API_URL}/api/transactions`,
-      );
+      const response = await axios.get<ExistingTransaction[]>(API_URL);
       return response.data;
     } catch (err) {
       console.error('Error fetching transactions:', err);
@@ -18,7 +16,7 @@ const httpService = {
   getTransaction: async (id: number): Promise<ExistingTransaction> => {
     try {
       const response = await axios.get<ExistingTransaction>(
-        `${API_URL}/api/transactions/${id}`,
+        `${API_URL}/${id}`,
       );
       return response.data;
     } catch (err) {
@@ -32,7 +30,7 @@ const httpService = {
   ): Promise<ExistingTransaction> => {
     try {
       const response = await axios.post<ExistingTransaction>(
-        `${API_URL}/api/transactions`,
+        `${API_URL}`,
         transactionData,
       );
       return response.data;
@@ -48,7 +46,7 @@ const httpService = {
   ): Promise<ExistingTransaction> => {
     try {
       const response = await axios.put<ExistingTransaction>(
-        `${API_URL}/api/transactions/${id}`,
+        `${API_URL}/${id}`,
         transactionData,
       );
       return response.data;
@@ -60,7 +58,7 @@ const httpService = {
 
   deleteTransaction: async (id: number): Promise<void> => {
     try {
-      await axios.delete(`${API_URL}/api/transactions/${id}`);
+      await axios.delete(`${API_URL}/${id}`);
     } catch (err) {
       console.error('Error deleting transaction:', err);
       throw err;
