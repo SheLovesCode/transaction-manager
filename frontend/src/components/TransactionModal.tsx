@@ -65,7 +65,7 @@ const TransactionModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose} sx={{backgroundColor:'beige'}}>
+    <Modal open={open} onClose={onClose} sx={{ backgroundColor: 'beige' }}>
       <Box
         sx={{
           position: 'absolute',
