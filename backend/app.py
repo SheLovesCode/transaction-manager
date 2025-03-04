@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 load_dotenv()
 db = SQLAlchemy()
@@ -10,9 +11,10 @@ ma = Marshmallow()
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL", "postgresql://myuser:mypassword@db:5432/transactions_db"
+        "DATABASE_URL", "postgresql://myuser:mypassword@db:5432/mydb"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
