@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage.tsx';
 import ViewSingleTransaction from './pages/ViewSingleTransaction.tsx';
 import { Box } from '@mui/material';
+import { Navigate } from 'react-router';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/transactions/:id" element={<ViewSingleTransaction />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Box>
   );
