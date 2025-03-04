@@ -1,9 +1,9 @@
 import { Modal, Box } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {ExistingTransaction, NewTransaction} from '../types/Transaction';
+import { ExistingTransaction, NewTransaction } from '../types/Transaction';
 import TransactionModal from './TransactionModal';
-import axios from "axios";
+import axios from 'axios';
 
 interface EditTransactionModalProps {
   open: boolean;
@@ -12,10 +12,18 @@ interface EditTransactionModalProps {
   onUpdate: (updatedTransaction: ExistingTransaction) => void;
 }
 
-const EditTransactionModal = ({ open, onClose, transaction, onUpdate }: EditTransactionModalProps) => {
+const EditTransactionModal = ({
+  open,
+  onClose,
+  transaction,
+  onUpdate,
+}: EditTransactionModalProps) => {
   const handleSave = async (updatedTransaction: NewTransaction) => {
     try {
-      const response = await axios.put(`/api/transactions/${transaction.id}`, updatedTransaction);
+      const response = await axios.put(
+        `/api/transactions/${transaction.id}`,
+        updatedTransaction,
+      );
       onUpdate(response.data);
       onClose();
     } catch (error) {

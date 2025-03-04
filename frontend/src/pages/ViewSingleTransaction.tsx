@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { CircularProgress, Typography, Paper, Button, Box } from '@mui/material';
-import { ExistingTransaction } from "../types/Transaction.ts";
-import EditTransactionModal from "../components/EditTransactionModal.tsx";
+import {
+  CircularProgress,
+  Typography,
+  Paper,
+  Button,
+  Box,
+} from '@mui/material';
+import { ExistingTransaction } from '../types/Transaction.ts';
+import EditTransactionModal from '../components/EditTransactionModal.tsx';
 
 function ViewSingleTransaction() {
   const { id } = useParams<{ id: string }>();
-  const [transaction, setTransaction] = useState<ExistingTransaction | null>(null);
+  const [transaction, setTransaction] = useState<ExistingTransaction | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -16,7 +24,9 @@ function ViewSingleTransaction() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get<ExistingTransaction>(`/api/transactions/${id}`);
+      const response = await axios.get<ExistingTransaction>(
+        `/api/transactions/${id}`,
+      );
       setTransaction(response.data);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch transaction.');
@@ -90,7 +100,14 @@ function ViewSingleTransaction() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Transaction Details
         </Typography>
