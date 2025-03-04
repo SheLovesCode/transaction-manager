@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from "./pages/HomePage.tsx";
-import SingleTransaction from "./pages/SingleTransaction.tsx";
+import SingleTransaction from "./pages/ViewSingleTransaction.tsx";
 
 export function App() {
   return (

@@ -5,7 +5,7 @@ import { CircularProgress, Typography, Paper, Button, Box } from '@mui/material'
 import { ExistingTransaction } from "../types/Transaction.ts";
 import EditTransactionModal from "../components/EditTransactionModal.tsx";
 
-export function ViewSingleTransaction() {
+function ViewSingleTransaction() {
   const { id } = useParams<{ id: string }>();
   const [transaction, setTransaction] = useState<ExistingTransaction | null>(null);
   const [loading, setLoading] = useState(true);

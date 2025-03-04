@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { ExistingTransaction } from "../types/Transaction.ts";
 // import axios from 'axios'; // Commented out axios
 
-export function HomePage() {
+function HomePage() {
   const [open, setOpenAddTransaction] = useState(false);
   const [transactions, setTransactions] = useState<ExistingTransaction[]>([]);
 
