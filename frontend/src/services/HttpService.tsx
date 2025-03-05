@@ -15,9 +15,7 @@ const httpService = {
 
   getTransaction: async (id: number): Promise<ExistingTransaction> => {
     try {
-      const response = await axios.get<ExistingTransaction>(
-        `${API_URL}/${id}`,
-      );
+      const response = await axios.get<ExistingTransaction>(`${API_URL}/${id}`);
       return response.data;
     } catch (err) {
       console.error('Error fetching transaction:', err);

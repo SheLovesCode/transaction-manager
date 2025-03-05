@@ -35,9 +35,9 @@ function ViewSingleTransaction() {
       const transactionID: number = Number(id);
       const transaction: ExistingTransaction =
         await httpService.getTransaction(transactionID);
-      if (transaction.amount < 0){
-      transaction.amount = transaction.amount*-1;
-    }
+      if (transaction.amount < 0) {
+        transaction.amount = transaction.amount * -1;
+      }
       setTransaction(transaction);
     } catch (err: any) {
       if (err.response && err.response.status === 404) {

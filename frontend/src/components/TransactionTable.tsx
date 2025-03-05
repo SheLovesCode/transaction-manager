@@ -8,7 +8,9 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText, DialogActions, Button,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,7 +29,7 @@ interface TransactionTableProps {
 
 export default function TransactionTable({
   transactions,
-  setTransactions
+  setTransactions,
 }: TransactionTableProps) {
   const navigate = useNavigate();
   const paginationModel = { page: 0, pageSize: 5 };
@@ -36,17 +38,16 @@ export default function TransactionTable({
   const [selectedTransaction, setSelectedTransaction] =
     useState<ExistingTransaction | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<
-    ExistingTransaction | null
-  >(null);
+  const [transactionToDelete, setTransactionToDelete] =
+    useState<ExistingTransaction | null>(null);
 
   const handleView = (transaction: ExistingTransaction) => {
     navigate(`/transactions/${transaction.id}`);
   };
 
   const handleEdit = (transaction: ExistingTransaction) => {
-    if (transaction.amount < 0){
-      transaction.amount = transaction.amount*-1;
+    if (transaction.amount < 0) {
+      transaction.amount = transaction.amount * -1;
     }
     setSelectedTransaction(transaction);
     setOpenEditTransaction(true);
@@ -82,19 +83,21 @@ export default function TransactionTable({
     setSelectedTransaction(null);
   };
 
-   const handleCloseDeleteModal = () => {
+  const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
     setTransactionToDelete(null);
   };
 
   const handleUpdateTransaction = (updatedTransaction: ExistingTransaction) => {
-  setTransactions((prevTransactions) =>
-    prevTransactions.map((transaction) =>
-      transaction.id === updatedTransaction.id ? updatedTransaction : transaction
-    )
-  );
-  handleCloseEditTransaction();
-};
+    setTransactions((prevTransactions) =>
+      prevTransactions.map((transaction) =>
+        transaction.id === updatedTransaction.id
+          ? updatedTransaction
+          : transaction,
+      ),
+    );
+    handleCloseEditTransaction();
+  };
 
   const columns: GridColDef[] = [
     {
@@ -132,17 +135,17 @@ export default function TransactionTable({
       flex: 2,
       headerAlign: 'center',
       renderCell: (params) => (
-       <Box sx={{ display: "flex", gap: 2 }}>
-  <IconButton onClick={() => handleView(params.row)}>
-    <VisibilityIcon />
-  </IconButton>
-  <IconButton onClick={() => handleEdit(params.row)}>
-    <EditIcon />
-  </IconButton>
-  <IconButton onClick={() => handleDelete(params.row)}>
-    <DeleteIcon />
-  </IconButton>
-</Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <IconButton onClick={() => handleView(params.row)}>
+            <VisibilityIcon />
+          </IconButton>
+          <IconButton onClick={() => handleEdit(params.row)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => handleDelete(params.row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Box>
       ),
     },
   ];
@@ -203,26 +206,25 @@ export default function TransactionTable({
             transaction will affect your balance.
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center", gap: 2, padding: 2 }}>
-  <Button
-    variant="outlined"
-    className="secondary-button"
-    onClick={handleCloseDeleteModal}
-    sx={{ width: "150px" }}
-  >
-    Cancel
-  </Button>
-  <Button
-    variant="contained"
-    className="primary-button"
-    onClick={handleConfirmDelete}
-    autoFocus
-    sx={{ width: "150px" }}
-  >
-    Delete
-  </Button>
-</DialogActions>
-
+        <DialogActions sx={{ justifyContent: 'center', gap: 2, padding: 2 }}>
+          <Button
+            variant="outlined"
+            className="secondary-button"
+            onClick={handleCloseDeleteModal}
+            sx={{ width: '150px' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            className="primary-button"
+            onClick={handleConfirmDelete}
+            autoFocus
+            sx={{ width: '150px' }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );

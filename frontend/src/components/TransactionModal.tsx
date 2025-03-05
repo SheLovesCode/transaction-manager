@@ -59,7 +59,7 @@ const TransactionModal = ({
 
   const onSubmit = (data: NewTransaction) => {
     if (data.type == 'credit') {
-      data.amount = data.amount*-1;
+      data.amount = data.amount * -1;
     }
     onSave(data);
   };
