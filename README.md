@@ -38,8 +38,6 @@ Make sure you have the following installed on your local machine:
 - **Docker** (version 20.10 or higher) [Install Docker](https://docs.docker.com/get-docker/)
 - **Docker Compose**  (Only required if your Docker Version is less than 20.10)
   [Install Docker Compose](https://docs.docker.com/compose/install/)
-- **Node.js** (version 16 or higher) [Install Node.js](https://nodejs.org/)
-- **Python 3.9+**: [Download Python](https://www.python.org/)
 
 ### Clone the Repository
 
