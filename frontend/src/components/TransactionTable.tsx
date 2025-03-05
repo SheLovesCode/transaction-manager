@@ -1,27 +1,44 @@
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import { IconButton, Box, Typography } from '@mui/material';
+import {
+  IconButton,
+  Box,
+  Typography,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ExistingTransaction } from '../types/Transaction.ts';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import EditTransactionModal from './EditTransactionModal.tsx';
 import { useNavigate } from 'react-router-dom';
 import httpService from '../services/HttpService.tsx';
+import { toast, ToastContainer } from 'react-toastify';
 
 interface TransactionTableProps {
   transactions: ExistingTransaction[];
+  setTransactions: React.Dispatch<React.SetStateAction<ExistingTransaction[]>>;
 }
 
 export default function TransactionTable({
   transactions,
+  setTransactions,
 }: TransactionTableProps) {
   const navigate = useNavigate();
   const paginationModel = { page: 0, pageSize: 5 };
-  const [_, setRows] = useState<ExistingTransaction[]>(transactions);
+  const [loading, setLoading] = useState(false);
   const [openEditTransaction, setOpenEditTransaction] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
+    useState<ExistingTransaction | null>(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] =
     useState<ExistingTransaction | null>(null);
 
   const handleView = (transaction: ExistingTransaction) => {
@@ -29,16 +46,35 @@ export default function TransactionTable({
   };
 
   const handleEdit = (transaction: ExistingTransaction) => {
+    if (transaction.amount < 0) {
+      transaction.amount = transaction.amount * -1;
+    }
     setSelectedTransaction(transaction);
     setOpenEditTransaction(true);
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await httpService.deleteTransaction(id);
-      setRows((prevRows) => prevRows.filter((row) => row.id !== id));
-    } catch (error) {
-      console.error('Error deleting transaction:', error);
+  const handleDelete = async (transaction: ExistingTransaction) => {
+    setTransactionToDelete(transaction);
+    setOpenDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (transactionToDelete) {
+      try {
+        setLoading(true);
+        await httpService.deleteTransaction(transactionToDelete.id);
+        const updatedTransactions: ExistingTransaction[] =
+          await httpService.getTransactions();
+        setTransactions(updatedTransactions);
+        toast.success('Transaction deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting transaction:', error);
+        toast.error('Error deleting transaction. Please try again.');
+      } finally {
+        setLoading(false);
+        setOpenDeleteModal(false);
+        setTransactionToDelete(null);
+      }
     }
   };
 
@@ -47,10 +83,17 @@ export default function TransactionTable({
     setSelectedTransaction(null);
   };
 
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setTransactionToDelete(null);
+  };
+
   const handleUpdateTransaction = (updatedTransaction: ExistingTransaction) => {
-    setRows((prevRows) =>
-      prevRows.map((row) =>
-        row.id === updatedTransaction.id ? updatedTransaction : row,
+    setTransactions((prevTransactions) =>
+      prevTransactions.map((transaction) =>
+        transaction.id === updatedTransaction.id
+          ? updatedTransaction
+          : transaction,
       ),
     );
     handleCloseEditTransaction();
@@ -61,7 +104,7 @@ export default function TransactionTable({
       field: 'date',
       headerName: 'Date',
       type: 'string',
-      flex: 1,
+      flex: 2,
       headerAlign: 'center',
     },
     {
@@ -89,17 +132,17 @@ export default function TransactionTable({
     {
       field: 'actions',
       headerName: 'Actions',
-      flex: 1,
+      flex: 2,
       headerAlign: 'center',
       renderCell: (params) => (
-        <Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
           <IconButton onClick={() => handleView(params.row)}>
             <VisibilityIcon />
           </IconButton>
           <IconButton onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
+          <IconButton onClick={() => handleDelete(params.row)}>
             <DeleteIcon />
           </IconButton>
         </Box>
@@ -118,19 +161,28 @@ export default function TransactionTable({
           backgroundColor: 'white',
         }}
       >
-        <DataGrid
-          rows={transactions}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10]}
-          sx={{
-            border: 0,
-            backgroundColor: '#fff',
-            marginTop: '16px',
-            width: '100%',
-          }}
-        />
+        {loading ? (
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', padding: '20px' }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DataGrid
+            rows={transactions}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[5, 10]}
+            sx={{
+              border: 0,
+              backgroundColor: '#fff',
+              marginTop: '16px',
+              width: '100%',
+            }}
+          />
+        )}
       </Paper>
+      <ToastContainer />
 
       {selectedTransaction && (
         <EditTransactionModal
@@ -140,6 +192,40 @@ export default function TransactionTable({
           onUpdate={handleUpdateTransaction}
         />
       )}
+
+      <Dialog
+        open={openDeleteModal}
+        onClose={handleCloseDeleteModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this transaction? Deleting this
+            transaction will affect your balance.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', gap: 2, padding: 2 }}>
+          <Button
+            variant="outlined"
+            className="secondary-button"
+            onClick={handleCloseDeleteModal}
+            sx={{ width: '150px' }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            className="primary-button"
+            onClick={handleConfirmDelete}
+            autoFocus
+            sx={{ width: '150px' }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

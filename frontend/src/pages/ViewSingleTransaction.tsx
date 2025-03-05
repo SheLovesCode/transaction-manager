@@ -33,9 +33,12 @@ function ViewSingleTransaction() {
     setError(null);
     try {
       const transactionID: number = Number(id);
-      const response: ExistingTransaction =
+      const transaction: ExistingTransaction =
         await httpService.getTransaction(transactionID);
-      setTransaction(response);
+      if (transaction.amount < 0) {
+        transaction.amount = transaction.amount * -1;
+      }
+      setTransaction(transaction);
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
         setError('Transaction not found.');
@@ -50,21 +53,6 @@ function ViewSingleTransaction() {
   useEffect(() => {
     fetchTransaction();
   }, [id]);
-
-  const mockTransaction: ExistingTransaction = {
-    id: parseInt(id!),
-    amount: 150.0,
-    date: '2023-11-01',
-    type: 'debit',
-    description: 'Mock transaction description',
-  };
-
-  useEffect(() => {
-    if (!transaction) {
-      setTransaction(mockTransaction);
-      setLoading(false);
-    }
-  }, [transaction]);
 
   const handleEdit = () => {
     setEditModalOpen(true);

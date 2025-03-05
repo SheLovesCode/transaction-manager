@@ -37,8 +37,7 @@ const TransactionModal = ({
   } = useForm<NewTransaction>({
     defaultValues: {
       amount: transaction?.amount,
-      date: transaction?.date,
-      type: transaction?.type || 'credit', // Provide a default value
+      type: transaction?.type || 'credit',
       description: transaction?.description,
     },
     mode: 'onChange',
@@ -47,20 +46,21 @@ const TransactionModal = ({
   useEffect(() => {
     if (transaction) {
       setValue('amount', transaction.amount);
-      setValue('date', transaction.date);
       setValue('type', transaction.type);
       setValue('description', transaction.description);
     } else {
       reset({
         amount: undefined,
-        date: undefined,
-        type: 'credit', // Ensure a default value here as well
+        type: 'credit',
         description: undefined,
       });
     }
   }, [transaction, reset, setValue]);
 
   const onSubmit = (data: NewTransaction) => {
+    if (data.type == 'credit') {
+      data.amount = data.amount * -1;
+    }
     onSave(data);
   };
 
@@ -99,23 +99,6 @@ const TransactionModal = ({
               error={!!errors.amount}
               helperText={errors.amount?.message}
               {...register('amount', { required: true })}
-            />
-            <TextField
-              label="Date"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              type="date"
-              error={!!errors.date}
-              helperText={errors.date?.message}
-              slotProps={{
-                input: {
-                  ...register('date', { required: true }),
-                },
-                inputLabel: {
-                  shrink: true,
-                },
-              }}
             />
             <FormControl fullWidth margin="normal" error={!!errors.type}>
               <InputLabel>Type</InputLabel>

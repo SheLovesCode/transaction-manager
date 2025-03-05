@@ -38,11 +38,7 @@ function HomePage() {
 
   function calculateBalance(transactions: ExistingTransaction[]): number {
     return transactions.reduce((balance, transaction) => {
-      if (transaction.type === 'credit') {
-        return balance + transaction.amount;
-      } else {
-        return balance - transaction.amount;
-      }
+      return balance + transaction.amount;
     }, 0);
   }
 
@@ -105,7 +101,10 @@ function HomePage() {
             onClose={handleCloseAddTransaction}
             onAdd={handleAddTransaction}
           />
-          <TransactionTable transactions={transactions} />
+          <TransactionTable
+            transactions={transactions}
+            setTransactions={setTransactions}
+          />
         </>
       )}
     </Container>

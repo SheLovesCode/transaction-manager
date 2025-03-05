@@ -21,7 +21,7 @@ const AddTransactionModal = ({
   const handleSave = async (transactionData: NewTransaction) => {
     setLoading(true);
     try {
-      const response = await httpService.createTransaction(transactionData)
+      const response = await httpService.createTransaction(transactionData);
       onAdd(response);
       onClose();
     } catch (error) {

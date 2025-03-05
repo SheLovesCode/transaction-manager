@@ -1,105 +1,40 @@
-import os
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-from dotenv import load_dotenv
-from flask_cors import CORS
+from flask import Flask
+from routes.gets import blp as GetRequestRoutes
+from routes.post import blp as PostRequestRoutes
+from routes.put import blp as PutRequestRoutes
+from routes.delete import blp as DeleteRequestRoutes
+from db.db_service import db
 
-load_dotenv()
-db = SQLAlchemy()
-ma = Marshmallow()
-
-def create_app():
+def create_app() -> Flask:
     app = Flask(__name__)
-    CORS(app)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL", "postgresql://myuser:mypassword@db:5432/mydb"
+    app.config["PROPAGATE_EXCEPTIONS"] = False
+
+    app.config["API_TITLE"] = "Transaction Manager API"
+    app.config["API_VERSION"] = "v1"
+
+    # postgRES Service Config
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"postgresql+psycopg2://admin:password@postgres:5432/txn_db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+    # Initialize the database
     db.init_app(app)
-    ma.init_app(app)
 
-    class Transaction(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        amount = db.Column(db.Numeric, nullable=False)
-        date = db.Column(db.DateTime, nullable=False)
-        type = db.Column(db.String(10), nullable=False)
-        description = db.Column(db.String(255), nullable=True)
-
-    # Marshmallow schema for serialization
-    class TransactionSchema(ma.SQLAlchemyAutoSchema):
-        class Meta:
-            model = Transaction
-
-    transaction_schema = TransactionSchema()
-    transactions_schema = TransactionSchema(many=True)
-
-    # Ensure database tables exist
+    # Create tables if they don't exist
     with app.app_context():
         db.create_all()
 
-    # ------------------- ROUTES -------------------
-
-    # Get all transactions
-    @app.route("/transactions", methods=["GET"])
-    def get_transactions():
-        transactions = Transaction.query.all()
-        return jsonify(transactions_schema.dump(transactions))
-
-    # Get a single transaction by ID
-    @app.route("/transactions/<int:transaction_id>", methods=["GET"])
-    def get_transaction(transaction_id):
-        transaction = Transaction.query.get(transaction_id)
-        if not transaction:
-            return jsonify({"error": "Transaction not found"}), 404
-        return jsonify(transaction_schema.dump(transaction))
-
-    # Create a new transaction
-    @app.route("/transactions", methods=["POST"])
-    def create_transaction():
-        data = request.get_json()
-        if "amount" not in data or "type" not in data or "date" not in data:
-            return jsonify({"error": "Missing required fields"}), 400
-        if data["type"] not in ["credit", "debit"]:
-            return jsonify({"error": "Invalid transaction type"}), 400
-
-        new_transaction = Transaction(
-            amount=data["amount"],
-            date=data["date"],
-            type=data["type"],
-            description=data.get("description", "")
-        )
-        db.session.add(new_transaction)
-        db.session.commit()
-        return jsonify(transaction_schema.dump(new_transaction)), 201
-
-    # Update an existing transaction
-    @app.route("/transactions/<int:transaction_id>", methods=["PUT"])
-    def update_transaction(transaction_id):
-        transaction = Transaction.query.get(transaction_id)
-        if not transaction:
-            return jsonify({"error": "Transaction not found"}), 404
-
-        data = request.get_json()
-        transaction.amount = data.get("amount", transaction.amount)
-        transaction.date = data.get("date", transaction.date)
-        transaction.type = data.get("type", transaction.type)
-        transaction.description = data.get("description", transaction.description)
-
-        db.session.commit()
-        return jsonify(transaction_schema.dump(transaction))
-
-    # Delete a transaction
-    @app.route("/transactions/<int:transaction_id>", methods=["DELETE"])
-    def delete_transaction(transaction_id):
-        transaction = Transaction.query.get(transaction_id)
-        if not transaction:
-            return jsonify({"error": "Transaction not found"}), 404
-
-        db.session.delete(transaction)
-        db.session.commit()
-        return jsonify({"message": "Transaction deleted successfully"}), 200
+    app.register_blueprint(GetRequestRoutes)
+    app.register_blueprint(PostRequestRoutes)
+    app.register_blueprint(PutRequestRoutes)
+    app.register_blueprint(DeleteRequestRoutes)
 
     return app
+
+# Create the app instance
+app = create_app()
+
+if __name__ == "__main__":
+    app.run(debug=True)
